@@ -1,4 +1,4 @@
-package br.com.criandoapi.projeto.DAO;
+package br.com.criandoapi.projeto.dao;
 
 import org.springframework.data.repository.CrudRepository;
 
