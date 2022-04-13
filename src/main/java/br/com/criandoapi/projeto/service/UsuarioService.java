@@ -13,7 +13,6 @@ import br.com.criandoapi.projeto.model.Usuario;
 @Service
 public class UsuarioService {
 	
-	private static final String Throw = null;
 	private PasswordEncoder password;
 	private IUsuario dao;
 	

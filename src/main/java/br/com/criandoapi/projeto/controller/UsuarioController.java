@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -59,11 +60,11 @@ public class UsuarioController {
 		return ResponseEntity.status(204).build();
 	}
 	
-	@GetMapping("/logar")
-	public ResponseEntity<?> validarSenha (@Valid @RequestBody Usuario usuario) {
+	@PostMapping("/login")
+	public ResponseEntity<Usuario> validarSenha (@Valid @RequestBody Usuario usuario) {
 		Boolean valid = usuarioService.validarSenha(usuario);
 		if (!valid) {
-			return ResponseEntity.status(404).build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 		return ResponseEntity.status(200).build();
 	}
