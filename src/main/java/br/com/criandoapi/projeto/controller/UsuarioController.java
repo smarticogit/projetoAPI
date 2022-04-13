@@ -1,12 +1,9 @@
 package br.com.criandoapi.projeto.controller;
 
 import java.util.List;
-
-import javax.validation.Valid;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,55 +14,38 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.criandoapi.projeto.dao.IUsuario;
 import br.com.criandoapi.projeto.model.Usuario;
-import br.com.criandoapi.projeto.service.UsuarioService;
 
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/usuarios")
 public class UsuarioController {
-	
-	private UsuarioService usuarioService;
-	
+
 	@Autowired
-	public UsuarioController (UsuarioService usuarioService) {
-		this.usuarioService = usuarioService;
-	}
+	private IUsuario dao;
 
 	@GetMapping
-	public ResponseEntity<List<Usuario>> listaUsuarios () {
-		List<Usuario> lista = usuarioService.listarUsuario();
-		return ResponseEntity.status(200).body(lista);
+	public List<Usuario> listaUsuarios() {
+		return (List<Usuario>) dao.findAll();
 	}
-	
+
 	@PostMapping
-	public ResponseEntity<Usuario> criarUsuario (@Valid @RequestBody Usuario usuario) {
-		Usuario usuarioNovo = usuarioService.salvarUsuario(usuario);
-		return ResponseEntity.status(201).body(usuarioNovo);
+	public Usuario criarUsuario(@RequestBody Usuario usuario) {
+		Usuario usuarioNovo = dao.save(usuario);
+		return usuarioNovo;
 	}
-	
+
 	@PutMapping
-	public ResponseEntity<Usuario> editarUsuario (@Valid @RequestBody Usuario usuario) {
-		Usuario usuarioNovo = usuarioService.editarUsuario(usuario);
-		return ResponseEntity.status(201).body(usuarioNovo);
+	public Usuario editarUsuario(@RequestBody Usuario usuario) {
+		Usuario usuarioNovo = dao.save(usuario);
+		return usuarioNovo;
 	}
-	
+
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> excluirUsuario (@PathVariable Integer id) {
-		try {
-			usuarioService.excluirUsuario(id);			
-		} catch (Exception e) {
-			return ResponseEntity.status(400).body(e.getMessage());
-		}
-		return ResponseEntity.status(204).build();
-	}
-	
-	@PostMapping("/login")
-	public ResponseEntity<Usuario> validarSenha (@Valid @RequestBody Usuario usuario) {
-		Boolean valid = usuarioService.validarSenha(usuario);
-		if (!valid) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
-		return ResponseEntity.status(200).build();
+	public Optional<Usuario> excluirUsuario(@PathVariable Integer id) {
+		Optional<Usuario> usuario = dao.findById(id);
+		dao.deleteById(id);
+		return usuario;
 	}
 }
