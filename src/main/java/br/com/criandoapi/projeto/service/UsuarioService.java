@@ -13,11 +13,12 @@ import br.com.criandoapi.projeto.model.Usuario;
 @Service
 public class UsuarioService {
 	
+	private static final String Throw = null;
 	private PasswordEncoder password;
 	private IUsuario dao;
 	
 	@Autowired
-	public UsuarioService(PasswordEncoder password, IUsuario dao) {
+	public UsuarioService(IUsuario dao) {
 		super();
 		this.password = new BCryptPasswordEncoder();
 		this.dao = dao;
@@ -34,4 +35,29 @@ public class UsuarioService {
 		Usuario usuarioNovo = dao.save(usuario);
 		return usuarioNovo;
 	}
+	
+	public Usuario editarUsuario (Usuario usuario) {
+		String encoder = this.password.encode(usuario.getSenha());
+		usuario.setSenha(encoder);
+		Usuario usuarioNovo = dao.save(usuario);
+		return usuarioNovo;
+	}
+	
+	public Boolean validarSenha (Usuario usuario) {
+		String senha = dao.getById(usuario.getId()).getSenha();
+		boolean valid = password.matches(usuario.getSenha(),senha );
+		return valid;
+	}
+	
+	public Boolean excluirUsuario (Integer id) throws Exception {
+		try {
+			dao.deleteById(id);
+		} catch (Exception e) {
+			throw new Exception (e.getMessage());
+		}
+		return true;
+	}
  }
+
+
+
