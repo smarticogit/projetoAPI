@@ -20,21 +20,16 @@ public class Usuario {
 	@Column(name = "id")
 	private Integer id;
 	
-	@NotBlank(message = "O nome é obrigatório")
-	@Length(min = 4, max = 200, message = "O nome precisa ter no mínimo 4 caracteres")
 	@Column(name = "nome", length = 200, nullable = false)
 	private String nome;
 	
-	@NotBlank(message = "O email é obrigatório")
 	@Email(message = "Email Inválido")
 	@Column(name = "email", length = 50, nullable = false)
 	private String email;
 	
-	@NotBlank(message = "O senha é obrigatório")
 	@Column(name = "senha", columnDefinition = "TEXT", nullable = false)
 	private String senha;
 	
-	@NotBlank(message = "O telefone é obrigatório")
 	@Column(name = "telefone", length = 15, nullable = false)
 	private String telefone;
 	
