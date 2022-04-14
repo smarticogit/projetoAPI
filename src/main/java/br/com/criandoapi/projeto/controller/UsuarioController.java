@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,27 +26,31 @@ public class UsuarioController {
 	
 	private UsuarioService usuarioService;
 	
-	@Autowired
 	public UsuarioController (UsuarioService usuarioService) {
 		this.usuarioService = usuarioService;
 	}
 
 	@GetMapping
 	public ResponseEntity<List<Usuario>> listaUsuarios () {
-		List<Usuario> lista = usuarioService.listarUsuario();
-		return ResponseEntity.status(200).body(lista);
+		return ResponseEntity.status(200).body(usuarioService.listarUsuario());
 	}
 	
 	@PostMapping
-	public ResponseEntity<Usuario> criarUsuario (@Valid @RequestBody Usuario usuario) {
-		Usuario usuarioNovo = usuarioService.salvarUsuario(usuario);
-		return ResponseEntity.status(201).body(usuarioNovo);
+	public ResponseEntity<?> criarUsuario (@Valid @RequestBody Usuario usuario) {
+		Boolean res = usuarioService.verificarEmail(usuario);
+		if (!res) {
+			return ResponseEntity.status(400).body("Email já existente");
+		}
+		return ResponseEntity.status(201).body(usuarioService.salvarUsuario(usuario));
 	}
 	
 	@PutMapping
-	public ResponseEntity<Usuario> editarUsuario (@Valid @RequestBody Usuario usuario) {
-		Usuario usuarioNovo = usuarioService.editarUsuario(usuario);
-		return ResponseEntity.status(201).body(usuarioNovo);
+	public ResponseEntity<?> editarUsuario (@Valid @RequestBody Usuario usuario) {
+		Boolean res = usuarioService.verificarEmail(usuario);
+		if (!res) {
+			return ResponseEntity.status(400).body("Email já existente");
+		}
+		return ResponseEntity.status(201).body(usuarioService.editarUsuario(usuario));
 	}
 	
 	@DeleteMapping("/{id}")
