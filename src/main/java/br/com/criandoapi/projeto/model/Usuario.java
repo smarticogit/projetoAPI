@@ -6,6 +6,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 
@@ -19,16 +22,22 @@ public class Usuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Integer id;
-	
-	@Column(name = "nome", length = 200, nullable = true)
+
+	@NotBlank(message = "O nome é obrigatório!")
+	@Size(min = 3 , message = "O nome deve ter no mínimo 3 caracteres!")
+	@Column(name = "nome", length = 200, nullable = false)
 	private String nome;
 	
-	@Column(name = "email", length = 50, nullable = true)
+	@Email(message = "Insira um email válido!")
+	@NotBlank(message = "O email é obrigatório!")
+	@Column(name = "email", length = 50, nullable = false)
 	private String email;
 	
-	@Column(name = "senha", columnDefinition = "TEXT", nullable = true)
+	@NotBlank(message = "A senha é obrigatória!")
+	@Column(name = "senha", columnDefinition = "TEXT", nullable = false)
 	private String senha;
 	
-	@Column(name = "telefone", length = 15, nullable = true)
+	@NotBlank(message = "O telefone é obrigatório!")
+	@Column(name = "telefone", length = 15, nullable = false)
 	private String telefone;
 }
