@@ -2,23 +2,28 @@ package br.com.criandoapi.projeto.service;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.criandoapi.projeto.dto.UsuarioDto;
 import br.com.criandoapi.projeto.model.Usuario;
 import br.com.criandoapi.projeto.repository.IUsuario;
+import br.com.criandoapi.projeto.security.Token;
+import br.com.criandoapi.projeto.security.TokenUtil;
+
 
 @Service
 public class UsuarioService {
-	
-	private PasswordEncoder password;
+		
 	private IUsuario repository;
+	private PasswordEncoder passwordEncoder;
 	
-	public UsuarioService(IUsuario dao, IUsuario repository ) {
-		super();
-		this.password = new BCryptPasswordEncoder();
+	public UsuarioService(IUsuario repository) {
 		this.repository = repository;
+		this.passwordEncoder = new BCryptPasswordEncoder();
 	}
 	
 	public List<Usuario> listarUsuario() {
@@ -26,44 +31,40 @@ public class UsuarioService {
 		return lista;
 	}
 	
-	public Usuario salvarUsuario (Usuario usuario) {
-		String encoder = this.password.encode(usuario.getSenha());
+	public Usuario criarUsuario(Usuario usuario) {
+		String encoder = this.passwordEncoder.encode(usuario.getSenha());
 		usuario.setSenha(encoder);
 		Usuario usuarioNovo = repository.save(usuario);
 		return usuarioNovo;
 	}
 	
-	public Usuario editarUsuario (Usuario usuario) {
-		String encoder = this.password.encode(usuario.getSenha());
+	public Usuario editarUsuario(Usuario usuario) {
+		String encoder = this.passwordEncoder.encode(usuario.getSenha());
 		usuario.setSenha(encoder);
 		Usuario usuarioNovo = repository.save(usuario);
 		return usuarioNovo;
 	}
 	
-	public Boolean validarSenha (Usuario usuario) {
+	public Boolean excluirUsuario(Integer id) {
+		repository.deleteById(id);
+		return true;
+	}
+
+	public Boolean validarSenha(Usuario usuario) {
 		String senha = repository.getById(usuario.getId()).getSenha();
-		boolean valid = password.matches(usuario.getSenha(),senha );
+		Boolean valid = passwordEncoder.matches(usuario.getSenha(), senha);
 		return valid;
 	}
-	
-	public Boolean verificarEmail (Usuario usuario) {
-		Usuario res = repository.findByEmailIs(usuario.getEmail());
-		if (res != null) {
-			return false;
+
+	public Token gerarToken(@Valid UsuarioDto usuario) {
+		Usuario user = repository.findBynomeOrEmail(usuario.getNome(), usuario.getEmail());
+		if(user != null) {
+			Boolean valid = passwordEncoder.matches(usuario.getSenha(), user.getSenha());
+			if(valid) {
+				return new Token(TokenUtil.createToken(user));
+			}
 		}
-		return true;
+		return null;
 	}
-	
-	
-	public Boolean excluirUsuario (Integer id) throws Exception {
-		try {
-			repository.deleteById(id);
-		} catch (Exception e) {
-			throw new Exception (e.getMessage());
-		}
-		return true;
-	}
- }
 
-
-
+}
