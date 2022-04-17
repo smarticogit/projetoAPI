@@ -6,4 +6,6 @@ import br.com.criandoapi.projeto.model.Usuario;
 
 public interface IUsuario extends JpaRepository<Usuario, Integer>{
 
+	public Usuario findBynomeOrEmail(String nome, String email);
+
 }
