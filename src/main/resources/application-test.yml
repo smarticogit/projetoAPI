@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: test
+
+# Configurações comuns para o perfil TEST
+database:
+  url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+  username: sa
+  password:

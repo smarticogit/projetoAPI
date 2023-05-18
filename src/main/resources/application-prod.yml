@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: prod
+
+# Configurações comuns para o perfil PROD
+database:
+  url: jdbc:postgresql://localhost:5432/proddb
+  username: produser
+  password: prodpassword
